@@ -1,0 +1,63 @@
+server:
+  port: 8800
+# Spring cloud
+spring:
+   application:
+      name: story-api
+   http:
+      multipart:
+         max-file-size: 512MB
+         max-request-size: 512MB
+   servlet:
+      multipart:
+         max-file-size: 512MB
+         max-request-size: 512MB
+   data:
+      mongodb:
+        uri: mongodb+srv://Sunbuy:Sunbuy12345@be-spring-story.lhw6dkj.mongodb.net/?retryWrites=true&w=majority
+        database: Story_DB
+#gateway:
+#   server: http://127.0.0.1:8800
+#accessTokenUri: ${gateway.server}/oauth/token
+
+## Flyway
+#spring.flyway.enabled: false    
+#spring.flyway.schemas: story_schema
+  
+
+
+# custom path for swagger-ui
+springdoc:
+  swagger-ui:
+    path: /swagger-ui-custom.html
+  api-docs:
+    path: /api-docs
+
+#jwt
+jwt:
+   clientId: 123
+   clientSecret: 123
+   expire: 1440000
+   signingKey: singing-key
+      
+logging:
+
+   file.name: logs/story-api.log
+
+   pattern:
+      console: '%d{HH:mm:ss} %-5level %logger{36}:%L - %msg%n'
+      file: '%d{HH:mm:ss} %-5level %logger{36}:%L - %msg%n'
+   level:
+      vn.sunbuy: DEBUG
+      com.netflix: WARN
+      org.springframework: WARN
+      org.springframework.security.web: WARN
+      org.springframework.context: WARN
+      fr.opensagres.xdocreport: ERROR
+      org.apache: WARN
+      org.apache.kafka.clients.producer: ERROR
+      org.apache.kafka.clients.consumer: ERROR
+      com.ulisesbocchio.jasyptspringboot: WARN
+      com.ulisesbocchio: WARN
+      springfox.documentation.spring.web: WARN
+      org.hibernate: WARN

@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<springProfile name="local">
+		<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+			<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+				<pattern>%d{"dd-MM HH:mm:ss"} %-5level %logger{35}:%L - %msg%n</pattern>
+			</encoder>		
+	 	</appender>
+		
+		<logger name="vn.sunbuy.story" level="ALL"/>
+		<logger name="com.netflix" level="INFO"/>
+		<logger name="org.springframework" level="WARN"/>
+	    <logger name="org.apache" level="WARN"/>
+	    <logger name="org.apache.kafka" level="WARN"/>
+	    <logger name="com.ulisesbocchio" level="WARN"/>
+	    <logger name="org.hibernate" level="WARN"/>
+	    <logger name="org.flywaydb" level="INFO"/>
+	    <logger name="springfox.documentation" level="ERROR"/>
+	    <logger name="springfox.bean" level="ERROR"/>
+	    <logger name="com.zaxxer.hikari" level="ERROR"/>
+	    <logger name="Validator" level="ERROR"/>
+	    <logger name="io.netty" level="OFF"/>
+	    <logger name="org.quartz" level="OFF"/> 
+	    <logger name="org.jboss.logging" level="OFF"/> 
+	    <logger name="io.lettuce.core.resource" level="OFF"/> 
+		<root level="INFO">
+		    <appender-ref ref="STDOUT" />
+	    </root>
+    </springProfile>
+    <springProfile name="dev">
+    	<!--
+		<appender name="SIZE_AND_TIME_BASED_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+	 		<file>/home/techlab/logs/wallet.log</file>
+	    	<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+	      		<fileNamePattern>/home/techlab/logs/wallet.%d{ddMMyy}.%i.log</fileNamePattern>
+	      		<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+	        		<maxFileSize>5MB</maxFileSize>
+	      		</timeBasedFileNamingAndTriggeringPolicy>
+	      		<maxHistory>60</maxHistory>
+	    	</rollingPolicy>
+	    	
+	    	<encoder>
+	      		<pattern>%d{"dd-MM HH:mm:ss"} %-5level %logger{35}:%L - %msg%n</pattern>
+	    	</encoder>
+	  	</appender> 	
+		-->
+		<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+			<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+				<pattern>%d{"dd-MM HH:mm:ss"} %-5level %logger{35}:%L - %msg%n</pattern>
+			</encoder>		
+	 	</appender>
+		
+		<logger name="vn.sunbuy.story" level="DEBUG"/>
+		<logger name="com.netflix" level="INFO"/>
+		<logger name="org.springframework" level="WARN"/>
+	    <logger name="org.apache" level="WARN"/>
+	    <logger name="org.apache.kafka" level="WARN"/>
+	    <logger name="com.ulisesbocchio" level="WARN"/>
+	    <logger name="org.hibernate" level="WARN"/>
+	    <logger name="org.flywaydb" level="INFO"/>
+	    <logger name="springfox.documentation" level="ERROR"/>
+	    <logger name="springfox.bean" level="ERROR"/>
+	    <logger name="com.zaxxer.hikari" level="ERROR"/>
+	    <logger name="Validator" level="ERROR"/>
+	    <logger name="io.netty" level="OFF"/>
+	    <logger name="org.quartz" level="OFF"/> 
+	    <logger name="org.jboss.logging" level="OFF"/> 
+	    <logger name="io.lettuce.core.resource" level="OFF"/> 
+		<root level="INFO">
+			<!--<appender-ref ref="SIZE_AND_TIME_BASED_FILE" />-->
+		    <appender-ref ref="STDOUT" />
+	    </root>
+    </springProfile>
+    <springProfile name="stg">
+    	<!--
+	 	<appender name="SIZE_AND_TIME_BASED_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+	 		<file>/home/techlab/logs/wallet.log</file>
+	    	<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+	      		<fileNamePattern>/home/techlab/logs/wallet.%d{ddMMyy}.%i.log</fileNamePattern>
+	      		<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+	        		<maxFileSize>5MB</maxFileSize>
+	      		</timeBasedFileNamingAndTriggeringPolicy>
+	      		<maxHistory>60</maxHistory>
+	    	</rollingPolicy>
+	    	
+	    	<encoder>
+	      		<pattern>%d{"dd-MM HH:mm:ss"} %-5level %logger{35}:%L - %msg%n</pattern>
+	    	</encoder>
+	  	</appender> 	
+		-->
+		<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+			<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+				<pattern>%d{"dd-MM HH:mm:ss"} %-5level %logger{35}:%L - %msg%n</pattern>
+			</encoder>		
+	 	</appender>
+		
+		<logger name="vn.sunbuy.story" level="DEBUG"/>
+		<logger name="com.netflix" level="INFO"/>
+		<logger name="org.springframework" level="WARN"/>
+	    <logger name="org.apache" level="WARN"/>
+	    <logger name="org.apache.kafka" level="WARN"/>
+	    <logger name="com.ulisesbocchio" level="WARN"/>
+	    <logger name="org.hibernate" level="WARN"/>
+	    <logger name="org.flywaydb" level="INFO"/>
+	    <logger name="springfox.documentation" level="ERROR"/>
+	    <logger name="springfox.bean" level="ERROR"/>
+	    <logger name="com.zaxxer.hikari" level="ERROR"/>
+	    <logger name="Validator" level="ERROR"/>
+	    <logger name="io.netty" level="OFF"/>
+	    <logger name="org.quartz" level="OFF"/> 
+	    <logger name="org.jboss.logging" level="OFF"/> 
+	    <logger name="io.lettuce.core.resource" level="OFF"/> 
+		<root level="INFO">
+			<!--<appender-ref ref="SIZE_AND_TIME_BASED_FILE" />-->
+		    <appender-ref ref="STDOUT" />
+	    </root>
+    </springProfile>
+    <springProfile name="prod">
+	 	<!--
+	 	<appender name="SIZE_AND_TIME_BASED_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+	 		<file>/home/techlab/logs/wallet.log</file>
+	    	<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+	      		<fileNamePattern>/home/techlab/logs/wallet.%d{ddMMyy}.%i.log</fileNamePattern>
+	      		<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+	        		<maxFileSize>5MB</maxFileSize>
+	      		</timeBasedFileNamingAndTriggeringPolicy>
+	      		<maxHistory>60</maxHistory>
+	    	</rollingPolicy>
+	    	
+	    	<encoder>
+	      		<pattern>%d{"dd-MM HH:mm:ss"} %-5level %logger{35}:%L - %msg%n</pattern>
+	    	</encoder>
+	  	</appender> 	
+		-->
+		<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+			<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+				<pattern>%d{"dd-MM HH:mm:ss"} %-5level %logger{35}:%L - %msg%n</pattern>
+			</encoder>		
+	 	</appender>
+		
+		<logger name="vn.sunbuy.story" level="DEBUG"/>
+		<logger name="com.netflix" level="INFO"/>
+		<logger name="org.springframework" level="WARN"/>
+	    <logger name="org.apache" level="WARN"/>
+	    <logger name="org.apache.kafka" level="WARN"/>
+	    <logger name="com.ulisesbocchio" level="WARN"/>
+	    <logger name="org.hibernate" level="WARN"/>
+	    <logger name="org.flywaydb" level="INFO"/>
+	    <logger name="springfox.documentation" level="ERROR"/>
+	    <logger name="springfox.bean" level="ERROR"/>
+	    <logger name="com.zaxxer.hikari" level="ERROR"/>
+	    <logger name="Validator" level="ERROR"/>
+	    <logger name="io.netty" level="OFF"/>
+	    <logger name="org.quartz" level="OFF"/> 
+	    <logger name="org.jboss.logging" level="OFF"/> 
+	    <logger name="io.lettuce.core.resource" level="OFF"/> 
+		<root level="DEBUG">
+			<!--<appender-ref ref="SIZE_AND_TIME_BASED_FILE" />-->
+		    <appender-ref ref="STDOUT" />
+	    </root>
+    </springProfile>
+</configuration>
