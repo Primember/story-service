@@ -21,8 +21,7 @@ public interface StoryService {
     Story updateStory(Story story, String id);
 	public Page<StoriesDTO> getNewStories(Pageable page);
 	public Page<StoriesDTO> getCompletedStories(Pageable page);
-	public Page<StoriesResult> searchStories(String textSearch, Pageable pageable);
-
+	public Page<StoriesResult> searchStories(String searchText, int page, int size);
 	public Page<Story> getStoryByCategory(String categoryCode, Pageable page);
 	public Page<StoriesDTO> getTopStoryByCategory(String categoryId, Pageable page);
 	public StoryDetailDTO getStoryDetail(String storyId);

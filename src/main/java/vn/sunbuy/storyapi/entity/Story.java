@@ -23,7 +23,7 @@ public class Story {
 	private String storyCode;
 	@TextIndexed(weight = 3)
 	private String storyName;
-	private String imageUrl;
+	private String thumbnail;
 	@TextIndexed
 	private String author;
 	private int totalChapters;
@@ -62,7 +62,7 @@ public StoriesDTO transferStories(Story story) {
 		storiesDTO.setId(story.getId());
 		storiesDTO.setStoryCode(story.getStoryCode());
 		storiesDTO.setStoryName(story.getStoryName());
-		storiesDTO.setImageUrl(story.getImageUrl());
+		storiesDTO.setThumbnail(story.getThumbnail());
 		storiesDTO.setTotalChapters(story.getTotalChapters());
 //		storiesDTO.setCategories(story.getCategories());
 		return storiesDTO;
@@ -80,7 +80,7 @@ public StoriesDTO transferStories(Story story) {
 		storyDetailDTO.setId(story.getId());
 		storyDetailDTO.setStoryCode(story.getStoryCode());
 		storyDetailDTO.setStoryName(story.getStoryName());
-		storyDetailDTO.setImageUrl(story.getImageUrl());
+		storyDetailDTO.setThumbnail(story.getThumbnail());
 		storyDetailDTO.setAuthor(story.getAuthor());
 		storyDetailDTO.setCategoryCode(story.getCategoryCode());
 		storyDetailDTO.setInfo(story.getInfo());

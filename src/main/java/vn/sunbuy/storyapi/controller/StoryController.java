@@ -5,6 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import vn.sunbuy.storyapi.common.URI;
 import vn.sunbuy.storyapi.entity.Story;
 import vn.sunbuy.storyapi.model.ContentDTO;
+import vn.sunbuy.storyapi.model.FullStoriesDTO;
 import vn.sunbuy.storyapi.model.StoriesDTO;
 import vn.sunbuy.storyapi.model.StoriesResult;
 import vn.sunbuy.storyapi.model.StoryDetailDTO;
@@ -37,45 +41,33 @@ public class StoryController {
 	  return storyService.createStory(story);
 	}
 	@PutMapping(URI.UPDATE + URI.ID)
-
     public Story updateCategory(@RequestBody Story story,@PathVariable String id) {
 		  return storyService.updateStory(story, id);
 
     }
-	
 	@GetMapping(URI.GETALL)
-	public Page<StoriesDTO> getAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size) {
+	public Page<StoriesDTO> getAll(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "20") int size) {
 		return storyService.getAllStories(page, size);
 	}
-	
-	@GetMapping(URI.SUCCESS)
-	public String createStory() {
-	  return "success";
+//	@GetMapping(URI.SUCCESS)
+//	public String createStory() {
+//	  return "success";
+//	}
+	@GetMapping(URI.HOME)
+	public FullStoriesDTO home() {
+		return storyService.getTopAndFullStory();
 	}
 	
-//	@GetMapping(URI.HOME)
-//	public FullStoriesDTO home() {
-//		return storyService.getTopAndFullStory();
-//	}
-	
 	@GetMapping(URI.GETNEWSTORIES)
-	public Page<StoriesDTO> getNewStories(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "16") int size) {
+	public Page<StoriesDTO> getNewStories(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "16") int size) {
 		Pageable pageable = PageRequest.of(page, size);
 		return storyService.getNewStories(pageable);
 	}
-	
 	@GetMapping(URI.GETCOMPLETEDSTORIES)
 	public Page<StoriesDTO> getCompletedStories(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "20") int size) {
 		Pageable pageable = PageRequest.of(page, size);
 		return storyService.getCompletedStories(pageable);
 	}
-	
-//	@GetMapping(URI.GETSTORYBYCATEGORY)
-//	public Page<StoriesDTO> getStoryByCategory(@RequestParam(name = "categoryId") String categoryId, @RequestParam(name = "page") int page, @RequestParam(name = "size") int size) {
-//		Pageable pageable = PageRequest.of(page, size);
-//		return storyService.getStoryByCategory(categoryId, pageable);
-//	}
-	
 	@GetMapping(URI.GETTOPSTORYBYCATEGORY)
 	public Page<StoriesDTO> getTopStoryByCategory(@RequestParam(name = "categoryId") String categoryId, @RequestParam(name = "page") int page, @RequestParam(name = "size") int size) {
 		Pageable pageable = PageRequest.of(page, size);
@@ -87,9 +79,14 @@ public class StoryController {
 //        return ResponseEntity.ok(storyService.getStoriesByAuthor(author, page, size));
 //    }	
 	@GetMapping(URI.SEARCH)
-	public Page<StoriesResult> searchStory(@RequestParam(name = "textSearch") String textSearch, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
-		Pageable pageable = PageRequest.of(page, size);
-		return storyService.searchStories(textSearch, pageable);
+	public ResponseEntity<?> searchStories(@RequestParam String tukhoa,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+		Page<StoriesResult> stories = storyService.searchStories(tukhoa, page, size);
+		if (stories.isEmpty()) {
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy");
+		}
+		return ResponseEntity.ok(stories);
 	}
 	@GetMapping(URI.GETSTORYDETAIL)
 	public StoryDetailDTO getStoryDetail(@RequestParam(name = "storyId") String storyId) {
@@ -115,7 +112,7 @@ public class StoryController {
 		return storyService.getTopStoriesByYear();
 	}
 	@GetMapping(URI.GETCONTENSTORY)
-	public Page<ContentDTO.Chapter> getContentStory(@PathVariable String storyCode,@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "50") int size) {
+	public Page<ContentDTO.Chapter> getContentStory(@PathVariable String storyCode,@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "50") int size) {
 		Pageable pageable = PageRequest.of(page, size);
 		return storyService.getContentStory(storyCode, pageable);
 	}

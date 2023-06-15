@@ -3,9 +3,11 @@ package vn.sunbuy.storyapi.service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -16,22 +18,21 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.TextCriteria;
+import org.springframework.data.mongodb.core.query.TextQuery;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-
-import vn.sunbuy.storyapi.entity.Author;
-import vn.sunbuy.storyapi.entity.Category;
 import vn.sunbuy.storyapi.entity.Story;
 import vn.sunbuy.storyapi.entity.View;
 import vn.sunbuy.storyapi.exception.StoryNotFoundException;
-import vn.sunbuy.storyapi.model.CategoryDTO;
 import vn.sunbuy.storyapi.model.ContentDTO;
 import vn.sunbuy.storyapi.model.FullStoriesDTO;
 import vn.sunbuy.storyapi.model.StoriesDTO;
 import vn.sunbuy.storyapi.model.StoriesResult;
 import vn.sunbuy.storyapi.model.StoryDetailDTO;
+import vn.sunbuy.storyapi.model.ViewCount;
 import vn.sunbuy.storyapi.repository.AuthorRepository;
 import vn.sunbuy.storyapi.repository.CategoryRepository;
 import vn.sunbuy.storyapi.repository.StoryRepository;
@@ -51,7 +52,7 @@ public class StoryServiceImpl implements StoryService {
 	AuthorRepository authorRepository;
 	@Override
 	public Page<StoriesDTO> getAllStories(int page, int size) {
-		Pageable pageable = PageRequest.of(page, size);
+		Pageable pageable = PageRequest.of(page-1, size);
         Page<Story> stories = storyRepository.findAll(pageable);
 		List<StoriesDTO> storiesDTOs = stories.stream()
 		    .map(story -> story.transferStories(story))
@@ -78,7 +79,7 @@ public class StoryServiceImpl implements StoryService {
 		_story.setStoryLink(_story.getStoryLink());
 		_story.setStoryCode(story.getStoryCode());
 		_story.setStoryName(story.getStoryName());
-		_story.setImageUrl(story.getImageUrl());
+		_story.setThumbnail(story.getThumbnail());
 		_story.setAuthor(story.getAuthor());
 		_story.setTotalChapters(story.getTotalChapters());
 		_story.setCategoryCode(story.getCategoryCode());
@@ -91,7 +92,7 @@ public class StoryServiceImpl implements StoryService {
 	@Override
 	public Page<StoriesDTO> getNewStories(Pageable page) {
 		Query queryGetNew = new Query();
-		Pageable sortedBy = PageRequest.of(page.getPageNumber(), page.getPageSize(), Sort.by("createdAt").descending());
+		Pageable sortedBy = PageRequest.of(page.getPageNumber()-1, page.getPageSize(), Sort.by("createdAt").descending());
 		queryGetNew.with(sortedBy);
 		List<Story> newStories = mongoTemplate.find(queryGetNew, Story.class);
 		Page<Story> patientPage = PageableExecutionUtils.getPage(
@@ -117,51 +118,12 @@ public class StoryServiceImpl implements StoryService {
 		Page<StoriesDTO> storiesDTO = patientPage.map(StoriesDTO::transfer);
 		return storiesDTO;
 	}
-
 	@Override
-	public Page<StoriesResult> searchStories(String textSearch, Pageable pageable) {
-		Criteria criteria = new Criteria().orOperator(
-		        Criteria.where("storyName").regex(textSearch, "i"),
-		        Criteria.where("categories.categoryName").regex(textSearch, "i"),
-		        Criteria.where("author.name").regex(textSearch, "i")
-		    );
-		    Query query = new Query(criteria).with(pageable);
-		    List<Story> stories = mongoTemplate.find(query, Story.class);
-		    long total = mongoTemplate.count(query, Story.class);
-		    List<StoriesResult> storiesResults = new ArrayList<>();
-		    for (Story story : stories) {
-		        StoriesResult storiesResult = StoriesResult.transfer(story);
-		        Author author = mongoTemplate.findById(story.getAuthor(), Author.class);
-		        ((Story) stories).setAuthor(author.getName());
-		        List<CategoryDTO> categories = new ArrayList<>();
-		        for (String categoryCode : story.getCategoryCode()) {
-		            Category category = mongoTemplate.findOne(Query.query(Criteria.where("categoryCode").is(categoryCode)), Category.class);
-		            categories.add(CategoryDTO.transfer(category));
-		        }
-//		        storiesResult.setCategories(categories);
-		        storiesResults.add(storiesResult);
-		    }
-		    return new PageImpl<>(storiesResults, pageable, total);
-//		TextCriteria criteria = TextCriteria.forDefaultLanguage().matchingAny(textSearch);
-//	    Query query = TextQuery.queryText(criteria).with(pageable);
-//	    List<Story> stories = mongoTemplate.find(query, Story.class);
-//	    long total = mongoTemplate.count(query, Story.class);
-//	    List<StoriesDTO> storiesDTOs = new ArrayList<>();
-//	    for (Story story : stories) {
-//	        StoriesDTO storiesDTO = StoriesDTO.transfer(story);
-//	        Author author = mongoTemplate.findById(story.getAuthor(), Author.class);
-//	        storiesDTO.setAuthor(author.getName());
-//	        List<CategoryDTO> categories = new ArrayList<>();
-//	        for (String categoryCode : story.getCategoryCode()) {
-//	            Category category = mongoTemplate.findOne(Query.query(Criteria.where("categoryCode").is(categoryCode)), Category.class);
-//	            categories.add(category.transfer(category));
-//	        }
-//	        storiesDTO.setCategories(categories);;
-//	        storiesDTOs.add(storiesDTO);
-//	    }
-//	    return new PageImpl<>(storiesDTOs, pageable, total);
-	}
-
+	public Page<StoriesResult> searchStories(String searchText, int page, int size) {
+		Pageable pageable = PageRequest.of(page-1, size, Sort.by("storyName").ascending());
+        Page<Story> stories = storyRepository.findAllByStoryNameContainingIgnoreCase(searchText, pageable);
+        return stories.map(StoriesResult::transfer);
+    }
 	@Override
 	public Page<Story> getStoryByCategory(String categoryCode, Pageable pageable) {
 		return storyRepository.findByCategoryCode(categoryCode, pageable);
@@ -169,7 +131,7 @@ public class StoryServiceImpl implements StoryService {
 
 	@Override
 	public Page<StoriesDTO> getTopStoryByCategory(String categoryId, Pageable page) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
@@ -256,6 +218,7 @@ public class StoryServiceImpl implements StoryService {
 	public FullStoriesDTO getTopAndFullStory() {
 		return null;
 	}
+
 
 
 

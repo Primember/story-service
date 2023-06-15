@@ -11,7 +11,7 @@ public class StoriesResult {
 	private String id;
 	private String storyCode;
 	private String storyName;
-	private String imageUrl;
+	private String thumbnail;
     private String author;
 	private int totalChapters;
 	private List<String> categoryName;
@@ -24,7 +24,7 @@ public static StoriesResult transfer(Story story) {
 		storiesResult.setId(story.getId());
 		storiesResult.setStoryCode(story.getStoryCode());
 		storiesResult.setStoryName(story.getStoryName());
-		storiesResult.setImageUrl(story.getImageUrl());
+		storiesResult.setThumbnail(story.getThumbnail());
 		storiesResult.setAuthor(story.getAuthor());
 		storiesResult.setTotalChapters(story.getTotalChapters());
 		storiesResult.setCategoryName(story.getCategoryName());

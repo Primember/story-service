@@ -53,7 +53,7 @@ public class CategoryServiceImpl implements CategoryService {
         if (category == null) {
             throw new ResourceNotFoundException("Category not found");
         }
-		Pageable pageable = PageRequest.of(page, size);
+		Pageable pageable = PageRequest.of(page -1, size);
         Page<Story> stories = storyRepository.findByCategoryCode(categoryCode, pageable);
         return stories.map(StoriesDTO::transfer);
     }

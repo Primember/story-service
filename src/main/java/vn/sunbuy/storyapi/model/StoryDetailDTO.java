@@ -11,7 +11,7 @@ public class StoryDetailDTO {
 	private String id;
 	private String storyCode;
 	private String storyName;
-	private String imageUrl;
+	private String thumbnail;
 //	private Long totalChapters;
 //	private Long totalViews;
 	private String author;

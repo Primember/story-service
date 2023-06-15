@@ -1,0 +1,14 @@
+server:
+  port: 8800
+spring:
+  application:
+    name: story-api
+  profiles:
+    active:
+      local 
+
+#Flyway
+spring.flyway.enabled: false    
+spring.flyway.schemas: story_schema
+jwt.signingKey: signing-key   
+spring.main.allow-bean-definition-overriding: true
