@@ -7,7 +7,7 @@ spring:
       name: story-services
    data:
       mongodb:
-        uri: mongodb://localhost:27017
+        uri: mongodb+srv://Sunbuy:Hoangdoan12345@be-spring-story.lhw6dkj.mongodb.net/?retryWrites=true&w=majority
         database: Story_DB
 
 #   http:
