@@ -1,4 +1,5 @@
 package vn.sunbuy.storyapi.common;
+
 public class JConstants {
 
 	public static final String SCHEMA = "_schema";
@@ -38,37 +39,16 @@ public class JConstants {
 	public static final String HHmmssSSSddMMyyyy = "HHmmssSSSddMMyyyy";
 	public static final String MMddHHmmss = "MMddHHmmss";
 	public static int HOUR_LOCAL = 7;// GMT-06:00 to GMT+07:00
-
 	public static final String USER_AGENT = "Mozilla/5.0";
 	public static final String AUTH_HEADER = "Authorization";
 	public static final String DEVICE_ID = "deviceId";
-
-	
-
-	public enum ERole {
-		
-		ROLE_USER,
-		ROLE_ADMIN
-
+	public enum ERole{
+		USER,
+		ADMIN
 	}
-	public enum Status {
-		 COMING_SOON,
-		 PUBLISHING,
-		 FULL
-	}
-	public enum type {
-		NEW_STORY,
-		HOT_STORY,
-		TIENHIEP_HAY,
-		NGONTINH_HAY,
-		NGONTINH_SAC,
-		NGONTINH_SUNG,
-		NGONTINH_NGUOC,
-		NGONTINHH_HAI,
-		DAMMY_HAI,
-		DAMMY_HAY,
-		DAMMY_HVAN
-	}
+	public enum TokenType {
+		  BEARER
+		}
 
 	public enum Env {
 		local, dev, stg,

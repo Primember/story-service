@@ -1,20 +1,17 @@
 package vn.sunbuy.storyapi.service;
 
+import java.time.LocalDate;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import vn.sunbuy.storyapi.entity.Story;
-import vn.sunbuy.storyapi.entity.Content;
 import vn.sunbuy.storyapi.model.ContentDTO;
-import vn.sunbuy.storyapi.model.FullStoriesDTO;
-//import vn.sunbuy.storyapi.model.FullStoriesDTO;
 import vn.sunbuy.storyapi.model.StoriesDTO;
 import vn.sunbuy.storyapi.model.StoriesResult;
 import vn.sunbuy.storyapi.model.StoryDetailDTO;
 @Service
 public interface StoryService {
-	public FullStoriesDTO getTopAndFullStory();
 	Story createStory(Story story);
 	Page<StoriesDTO> getAllStories(int page, int size);
     Story getStoryById(String id);
@@ -24,13 +21,12 @@ public interface StoryService {
 	public Page<StoriesResult> searchStories(String searchText, int page, int size);
 	public Page<Story> getStoryByCategory(String categoryCode, Pageable page);
 	public Page<StoriesDTO> getTopStoryByCategory(String categoryId, Pageable page);
-	public StoryDetailDTO getStoryDetail(String storyId);
-	public List<StoriesDTO> getTopStoriesByDay();
-	public List<StoriesDTO> getTopStoriesByMonth();
-	public List<StoriesDTO> getTopStoriesByYear();
-//	public List<StoriesDTO> searchNewStory(String authorSearch, String categorySeach, int totalChapter);
+	public StoryDetailDTO getStoryDetail(String storyCode, int page, int size);
 	public void updateViewStory(String storyId);
-	public Page<ContentDTO.Chapter> getContentStory(String storyCode, Pageable pageable );
-	public void deleteStory(String id);
+	public ContentDTO getContentStory(String storyCode, int chapterNumber);
+	
+	List<StoriesDTO> filterByTotalChapters(String filter);
+	public List<StoriesDTO> getTopStory(LocalDate startDate, LocalDate endDate);
+	public List<StoriesDTO> getTopStoriesByTimes(String range);
 	
 }

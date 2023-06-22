@@ -5,9 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 import vn.sunbuy.storyapi.common.URI;
 import vn.sunbuy.storyapi.entity.Story;
 import vn.sunbuy.storyapi.model.ContentDTO;
-import vn.sunbuy.storyapi.model.FullStoriesDTO;
 import vn.sunbuy.storyapi.model.StoriesDTO;
 import vn.sunbuy.storyapi.model.StoriesResult;
 import vn.sunbuy.storyapi.model.StoryDetailDTO;
@@ -49,14 +45,10 @@ public class StoryController {
 	public Page<StoriesDTO> getAll(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "20") int size) {
 		return storyService.getAllStories(page, size);
 	}
-//	@GetMapping(URI.SUCCESS)
-//	public String createStory() {
-//	  return "success";
+//	@GetMapping(URI.HOME)
+//	public FullStoriesDTO home() {
+//		return storyService.getTopAndFullStory();
 //	}
-	@GetMapping(URI.HOME)
-	public FullStoriesDTO home() {
-		return storyService.getTopAndFullStory();
-	}
 	
 	@GetMapping(URI.GETNEWSTORIES)
 	public Page<StoriesDTO> getNewStories(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "16") int size) {
@@ -73,25 +65,21 @@ public class StoryController {
 		Pageable pageable = PageRequest.of(page, size);
 		return storyService.getTopStoryByCategory(categoryId, pageable);
 	}
-//	@GetMapping(URI.GETSTORYBYAUTHORNAME)
-//	public ResponseEntity<Page<Story>> getStoryByAuthorName(@PathVariable String author, @RequestParam(defaultValue = "0") int page, 
-//			@RequestParam(defaultValue = "10") int size) {
-//        return ResponseEntity.ok(storyService.getStoriesByAuthor(author, page, size));
-//    }	
 	@GetMapping(URI.SEARCH)
-	public ResponseEntity<?> searchStories(@RequestParam String tukhoa,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-		Page<StoriesResult> stories = storyService.searchStories(tukhoa, page, size);
-		if (stories.isEmpty()) {
-		return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy");
-		}
-		return ResponseEntity.ok(stories);
+	public ResponseEntity<Page<StoriesResult>> searchStories(
+	        @RequestParam(name = "searchText", required = false) String searchText,
+	        @RequestParam(name = "page", defaultValue = "1") int page,
+	        @RequestParam(name = "size", defaultValue = "16") int size) {
+
+	    Page<StoriesResult> results = storyService.searchStories(searchText, page, size);
+	    return ResponseEntity.ok(results);
 	}
 	@GetMapping(URI.GETSTORYDETAIL)
-	public StoryDetailDTO getStoryDetail(@RequestParam(name = "storyId") String storyId) {
-		return storyService.getStoryDetail(storyId);
-	}	
+	public ResponseEntity<StoryDetailDTO> getStoryDetail(@PathVariable String storyCode,
+            @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size) {
+        StoryDetailDTO storyDetail = storyService.getStoryDetail(storyCode, page, size);
+        return ResponseEntity.ok(storyDetail);
+    }
 	@PostMapping(URI.UPDATEORCREATEVIEW)
 	public void updateOrCreateView(@RequestParam(name = "storyId") String storyId) {
 		System.out.print("storyId");
@@ -99,23 +87,20 @@ public class StoryController {
 		storyService.updateViewStory(storyId);
 	}
 	@GetMapping(URI.GETTOPDAY)
-	public List<StoriesDTO> getTopDay() {
-		return storyService.getTopStoriesByDay();
+	public List<StoriesDTO> getTopStories(@RequestParam("range") String range) {
+	    return storyService.getTopStoriesByTimes(range);
 	}
-	@GetMapping(URI.GETTOPMONTH)
-	public List<StoriesDTO> getTopMonth() {
-		return storyService.getTopStoriesByMonth();
-	}
-	
-	@GetMapping(URI.GETTOPYEAR)
-	public List<StoriesDTO> getTopYear() {
-		return storyService.getTopStoriesByYear();
-	}
+
 	@GetMapping(URI.GETCONTENSTORY)
-	public Page<ContentDTO.Chapter> getContentStory(@PathVariable String storyCode,@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "50") int size) {
-		Pageable pageable = PageRequest.of(page, size);
-		return storyService.getContentStory(storyCode, pageable);
-	}
+	public ContentDTO getChapter(@PathVariable String storyCode, @PathVariable int chapterNumber) {
+        return storyService.getContentStory(storyCode, chapterNumber);
+    }
+	@GetMapping(URI.FILTERBYCHAPTERS)
+	public ResponseEntity<List<StoriesDTO>> filterByTotalChapters(@PathVariable String range) {
+        List<StoriesDTO> storiesDTOList = storyService.filterByTotalChapters(range);
+        return ResponseEntity.ok(storiesDTOList);
+    }
+
 	@DeleteMapping(URI.ID)
     public void deleteStory(Story story,@PathVariable String id) {
         storyRepository.deleteById(id);

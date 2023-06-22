@@ -16,11 +16,7 @@
 //public class ProdAppConfig {
 // @Value("${server.port}")
 // private String serverPort;
-// 
-// @Bean
-//    PasswordEncoder passwordEncoder() {
-//        return new BCryptPasswordEncoder();
-//    }
+//
 // @Bean
 //    WebMvcConfigurer corsConfigurer() {
 //        return new WebMvcConfigurer() {

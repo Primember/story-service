@@ -1,32 +1,48 @@
 package vn.sunbuy.storyapi.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration {
+//	@Autowired
+//	private JwtAuthenicationFilter jwtAuthenicationFilter;
+//	@Autowired
+//	private AuthenticationProvider authenticationProvider;
 	@Bean
 	 SecurityFilterChain configure(HttpSecurity http) throws Exception {
+//		    http.csrf().disable().authorizeHttpRequests().requestMatchers("/user/signup", "/user/signin").permitAll()
+//		            .requestMatchers("/stories/**").hasRole("USER")
+//		            .requestMatchers("/admin/**").hasRole("ADMIN").anyRequest().authenticated().and().exceptionHandling()
+//		            .authenticationEntryPoint(jwtAuthenticationEntryPoint).and().sessionManagement()
+//		            .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+//
+//		    http.addFilterBefore(new JwtAuthenticationFilter(authenticationManagerBean()), UsernamePasswordAuthenticationFilter.class);
+//		    http.addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);
+//		}
+		
+		
+		
+		
+		
+		
+		
+		
 	     http.csrf().disable();
 	     http
 	         .authorizeHttpRequests()
-//	         .requestMatchers("/**").permitAll()
-//	         .requestMatchers(HttpMethod.GET).permitAll()
-	         .anyRequest().permitAll();
+	         .requestMatchers("/**").permitAll()
 //	         .anyRequest().authenticated()
-//	         .and()
-//	         .logout()
-//	         .logoutRequestMatcher(new AntPathRequestMatcher("/api/v1/logout"))
-//	         .and()
-//	         .exceptionHandling()
-//	         .accessDeniedPage("/accessDenied");
+	         
+	    ;
 	     return http.build();
 	
 	  }	
@@ -34,7 +50,14 @@ public class SecurityConfiguration {
 }
 	
 	
-	
+
+
+
+
+
+
+
+
 	
 //	@Autowired
 //    @Qualifier("authenticationManagerBean")

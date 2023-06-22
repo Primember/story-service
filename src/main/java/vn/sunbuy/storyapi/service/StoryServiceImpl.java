@@ -3,12 +3,10 @@ package vn.sunbuy.storyapi.service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -19,7 +17,6 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.TextCriteria;
-import org.springframework.data.mongodb.core.query.TextQuery;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Service;
@@ -34,7 +31,6 @@ import vn.sunbuy.storyapi.model.StoriesResult;
 import vn.sunbuy.storyapi.model.StoryDetailDTO;
 import vn.sunbuy.storyapi.model.ViewCount;
 import vn.sunbuy.storyapi.repository.AuthorRepository;
-import vn.sunbuy.storyapi.repository.CategoryRepository;
 import vn.sunbuy.storyapi.repository.StoryRepository;
 import vn.sunbuy.storyapi.repository.ViewRepository;
 
@@ -42,8 +38,6 @@ import vn.sunbuy.storyapi.repository.ViewRepository;
 public class StoryServiceImpl implements StoryService {
 	@Autowired
 	private StoryRepository storyRepository;
-	@Autowired
-	private CategoryRepository categoryRepository;
 	@Autowired
 	private ViewRepository viewRepository;
 	@Autowired
@@ -75,7 +69,7 @@ public class StoryServiceImpl implements StoryService {
 	@Override
 	public Story updateStory(Story story, String id) {
       Story _story = storyRepository.findById(id)
-      .orElseThrow(() -> new ResourceNotFoundException("Story not found"));
+      .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy truyện"));
 		_story.setStoryLink(_story.getStoryLink());
 		_story.setStoryCode(story.getStoryCode());
 		_story.setStoryName(story.getStoryName());
@@ -120,10 +114,16 @@ public class StoryServiceImpl implements StoryService {
 	}
 	@Override
 	public Page<StoriesResult> searchStories(String searchText, int page, int size) {
-		Pageable pageable = PageRequest.of(page-1, size, Sort.by("storyName").ascending());
-        Page<Story> stories = storyRepository.findAllByStoryNameContainingIgnoreCase(searchText, pageable);
-        return stories.map(StoriesResult::transfer);
-    }
+	    Pageable pageable = PageRequest.of(page - 1, size, Sort.by("storyName").ascending());
+	    TextCriteria textCriteria = TextCriteria.forDefaultLanguage().matchingPhrase(searchText);
+	    Page<Story> stories = storyRepository.findBy(textCriteria, pageable);
+	    if (stories.isEmpty()) {
+	        List<StoriesResult> emptyList = new ArrayList<>();
+	        return new PageImpl<>(emptyList, pageable, 0);
+	    }
+
+	    return stories.map(StoriesResult::transfer);
+	}
 	@Override
 	public Page<Story> getStoryByCategory(String categoryCode, Pageable pageable) {
 		return storyRepository.findByCategoryCode(categoryCode, pageable);
@@ -136,29 +136,69 @@ public class StoryServiceImpl implements StoryService {
 	}
 
 	@Override
-	public StoryDetailDTO getStoryDetail(String storyId) {
-		Query query = new Query(Criteria.where("_id").is(storyId));
-        Story story = mongoTemplate.findOne(query, Story.class);
-        if (story == null) {
-            throw new StoryNotFoundException("Story not found!");
-        }
-        return story.transferStoryDetail(story);
+	public StoryDetailDTO getStoryDetail(String storyCode, int page, int size) {
+	    Query query = new Query(Criteria.where("storyCode").is(storyCode));
+	    Story story = mongoTemplate.findOne(query, Story.class);
+	    if (story == null) {
+	        throw new StoryNotFoundException(storyCode);
+	    }
+
+	    List<Story.Chapter> chapters = story.getChapterLinks();
+	    int totalChapters = chapters.size();
+	    int startIndex = (page - 1) * size;
+	    int endIndex = Math.min(startIndex + size, totalChapters);
+	    List<StoryDetailDTO.Chapter> pagedChapterDTOs = new ArrayList<>();
+	    for (int i = startIndex; i < endIndex; i++) {
+	        Story.Chapter chapter = chapters.get(i);
+	        StoryDetailDTO.Chapter chapterDTO = new StoryDetailDTO.Chapter();
+	        chapterDTO.setTitle(chapter.getTitle());
+	        chapterDTO.setLink(chapter.getLink());
+	        pagedChapterDTOs.add(chapterDTO);
+	    }
+
+	    StoryDetailDTO storyDetailDTO = story.transferStoryDetail(story);
+	    storyDetailDTO.setChapterLinks(pagedChapterDTOs);
+
+	    return storyDetailDTO;
 	}
+	
 	@Override
-	public List<StoriesDTO> getTopStoriesByDay() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	@Override
-	public List<StoriesDTO> getTopStoriesByMonth() {
-		// TODO Auto-generated method stub
-		return null;
+	public List<StoriesDTO> getTopStoriesByTimes(String range) {
+	    LocalDate startDate = null;
+	    LocalDate endDate = null;
+	    switch (range) {
+	        case "day":
+	            startDate = LocalDate.now();
+	            endDate = startDate.plusDays(1);
+	            break;
+	        case "month":
+	            startDate = LocalDate.now().minusDays(30);
+	            endDate = LocalDate.now().plusDays(1);
+	            break;
+	        case "year":
+	            startDate = LocalDate.now().minusDays(365);
+	            endDate = LocalDate.now().plusDays(1);
+	            break;
+	        default:
+	            throw new StoryNotFoundException(range);
+	    }
+	    return this.getTopStory(startDate, endDate);
 	}
 
-	@Override
-	public List<StoriesDTO> getTopStoriesByYear() {
-		// TODO Auto-generated method stub
-		return null;
+	public List<StoriesDTO> getTopStory(LocalDate startDate, LocalDate endDate) {
+	    List<StoriesDTO> storiesDTOs = new ArrayList<StoriesDTO>();
+	    Query query = new Query(Criteria.where("date").gte(startDate).lte(endDate));
+	    query.limit(5);
+	    query.with(Sort.by(Sort.Direction.DESC, "totalViews"));
+	    List<View> views = mongoTemplate.find(query, View.class);
+	    if (!CollectionUtils.isEmpty(views)) {
+	        List<String> storyIds = views.stream().map(view -> view.getStoryId()).collect(Collectors.toList());
+	        Iterable<Story> topStories = storyRepository.findAllById(storyIds);
+	        topStories.forEach((story) -> {
+	            storiesDTOs.add(mapToStoriesDTO(story));
+	        });
+	    }
+	    return storiesDTOs;
 	}
 
 	@Override
@@ -192,65 +232,76 @@ public class StoryServiceImpl implements StoryService {
 	}
 
 	@Override
-	public Page<ContentDTO.Chapter> getContentStory(String storyCode, Pageable pageable) {
-		Query query = new Query(Criteria.where("storyCode").is(storyCode));
-        query.fields().slice("content", (int)pageable.getOffset(), pageable.getPageSize());
-        List<Document> contentDocuments = mongoTemplate.find(query, Document.class, "content");
-        if (contentDocuments.isEmpty()) {
-            throw new RuntimeException("Story not found");
-        }
-        List<Document> chapterDocuments = contentDocuments.get(0).getList("content", Document.class);
-        List<ContentDTO.Chapter> chapters = new ArrayList<>();
-        for (Document chapterDocument : chapterDocuments) {
-            ContentDTO.Chapter chapter = new ContentDTO.Chapter();
-            chapter.setChapterTitle(chapterDocument.getString("chapterTitle"));
-            chapter.setHtmlContent(chapterDocument.getString("htmlContent"));
-            chapters.add(chapter);
-        }
-        return new PageImpl<>(chapters, pageable, chapterDocuments.size());
+	public ContentDTO getContentStory(String storyCode, int chapterNumber) {
+	    Query query = new Query(Criteria.where("storyCode").is(storyCode));
+	    List<ContentDTO> contentDTOs = mongoTemplate.find(query, ContentDTO.class, "content");
+	    if (contentDTOs.isEmpty()) {
+	        throw new StoryNotFoundException(storyCode);
+	    }
+	    ContentDTO contentDTO = contentDTOs.get(0);
+	    List<ContentDTO.Chapter> chapterDTOs = contentDTO.getContent();
+	    if (chapterDTOs.isEmpty() || chapterNumber > chapterDTOs.size()) {
+	        throw new RuntimeException("Không tìm thấy chương.");
+	    }
+	    ContentDTO.Chapter chapterDTO = chapterDTOs.get(chapterNumber - 1);
+	    ContentDTO resultDTO = new ContentDTO();
+	    resultDTO.setStoryCode(contentDTO.getStoryCode());
+	    resultDTO.setStoryName(contentDTO.getStoryName());
+	    resultDTO.setAuthor(contentDTO.getAuthor());
+	    resultDTO.setCategoryCode(contentDTO.getCategoryCode());
+	    resultDTO.setCategoryName(contentDTO.getCategoryName());
+	    resultDTO.setStatus(contentDTO.getStatus());
+	    resultDTO.setRate(contentDTO.getRate());
+	    ContentDTO.Chapter resultChapterDTO = new ContentDTO.Chapter();
+	    resultChapterDTO.setChapterTitle(chapterDTO.getChapterTitle());
+	    resultChapterDTO.setHtmlContent(chapterDTO.getHtmlContent());
+	    resultDTO.setContent(Arrays.asList(resultChapterDTO));
+	    return resultDTO;
 	}
 	@Override
-	public void deleteStory(String id) {
-		storyRepository.deleteById(id);
-	}
+	public List<StoriesDTO> filterByTotalChapters(String range) {
+        List<StoriesDTO> storiesDTOList = new ArrayList<>();
 
-	@Override
-	public FullStoriesDTO getTopAndFullStory() {
-		return null;
-	}
+        switch (range) {
+            case "1":
+                storyRepository.findByTotalChaptersLessThan(100).forEach(story -> {
+                    storiesDTOList.add(mapToStoriesDTO(story));
+                });
+                break;
+            case "2":
+                storyRepository.findByTotalChaptersBetween(100, 500).forEach(story -> {
+                    storiesDTOList.add(mapToStoriesDTO(story));
+                });
+                break;
+            case "3":
+                storyRepository.findByTotalChaptersBetween(500, 1000).forEach(story -> {
+                    storiesDTOList.add(mapToStoriesDTO(story));
+                });
+                break;
+            case "4":
+                storyRepository.findByTotalChaptersGreaterThan(1000).forEach(story -> {
+                    storiesDTOList.add(mapToStoriesDTO(story));
+                });
+                break;
+            default:
+                throw new StoryNotFoundException("Không tìm thấy");
+        }
 
+        return storiesDTOList;
+    }
 
+    private StoriesDTO mapToStoriesDTO(Story story) {
+        StoriesDTO storiesDTO = new StoriesDTO();
+        storiesDTO.setId(story.getId());
+        storiesDTO.setStoryCode(story.getStoryCode());
+        storiesDTO.setStoryName(story.getStoryName());
+        storiesDTO.setCategoryDescription(story.getCategoryDescription());
+        storiesDTO.setThumbnail(story.getThumbnail());
+        storiesDTO.setTotalChapters(story.getTotalChapters());
+        return storiesDTO;
+    }
 
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	   
+   
 //	@Override
 //	public FullStoriesDTO getTopAndFullStory() {
 //		FullStoriesDTO fullStoriesDTO = new FullStoriesDTO();

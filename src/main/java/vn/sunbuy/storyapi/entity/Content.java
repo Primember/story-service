@@ -11,6 +11,12 @@ import lombok.Setter;
 public class Content {
 	private String id;
 	private String storyCode;
+	private String storyName;
+	private String author;
+	private String categoryCode;
+	private String categoryName;
+	private String status;
+	private String rate;
 	private List<Chapter> content;
 	public static class Chapter {
 		private String chapterTitle;

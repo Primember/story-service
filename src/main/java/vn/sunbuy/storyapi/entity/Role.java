@@ -3,9 +3,12 @@ package vn.sunbuy.storyapi.entity;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import lombok.Getter;
+import lombok.Setter;
 import vn.sunbuy.storyapi.common.JConstants.ERole;
-
-//@Document(collection = "roles")
+@Getter
+@Setter
+@Document(collection = "roles")
 public class Role {
 	
   @Id
@@ -15,26 +18,6 @@ public class Role {
 
   public Role() {
 
-  }
-
-  public Role(ERole name) {
-    this.name = name;
-  }
-
-  public String getId() {
-    return id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
-  }
-
-  public ERole getName() {
-    return name;
-  }
-
-  public void setName(ERole name) {
-    this.name = name;
   }
 
 }

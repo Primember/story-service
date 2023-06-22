@@ -12,6 +12,12 @@ public class ContentDTO {
 	
 	private String id;
 	private String storyCode;
+	private String storyName;
+	private String author;
+	private String categoryCode;
+	private String categoryName;
+	private String status;
+	private String rate;
 	private List<Chapter> content;
 	public static class Chapter {
 		private String chapterTitle;
@@ -40,6 +46,12 @@ public ContentDTO transfer(Content content) {
 		ContentDTO contentDTO = new ContentDTO();
 		contentDTO.setId(content.getId());
 		contentDTO.setStoryCode(content.getStoryCode());
+		contentDTO.setStoryName(content.getStoryName());
+		contentDTO.setAuthor(content.getAuthor());
+		contentDTO.setCategoryCode(content.getCategoryCode());
+		contentDTO.setCategoryName(content.getCategoryName());
+		contentDTO.setStatus(content.getStatus());
+		contentDTO.setRate(content.getRate());
 		contentDTO.setContent(chapterDTOs);
 		return contentDTO;
 		

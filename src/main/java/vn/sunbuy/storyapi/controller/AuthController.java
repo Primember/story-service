@@ -4,9 +4,6 @@
 //import java.util.List;
 //import java.util.Set;
 //import java.util.stream.Collectors;
-//
-//import javax.validation.Valid;
-//
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.context.annotation.Bean;
 //import org.springframework.security.authentication.AuthenticationManager;
@@ -16,28 +13,29 @@
 //import org.springframework.security.core.userdetails.UserDetails;
 //import org.springframework.security.crypto.password.PasswordEncoder;
 //import org.springframework.util.CollectionUtils;
+//import org.springframework.web.bind.annotation.PostMapping;
 //import org.springframework.web.bind.annotation.RequestBody;
 //import org.springframework.web.bind.annotation.RequestMapping;
-//import org.springframework.web.bind.annotation.RequestMethod;
 //import org.springframework.web.bind.annotation.RestController;
+//import jakarta.validation.Valid;
 //import vn.sunbuy.storyapi.common.URI;
 //import vn.sunbuy.storyapi.common.JConstants.ERole;
 //import vn.sunbuy.storyapi.entity.Role;
-//import vn.sunbuy.storyapi.entity.Users;
+//import vn.sunbuy.storyapi.entity.User;
 //import vn.sunbuy.storyapi.model.JwtDTO;
 //import vn.sunbuy.storyapi.model.LoginRequest;
 //import vn.sunbuy.storyapi.model.SignupRequest;
 //import vn.sunbuy.storyapi.repository.RoleRepository;
 //import vn.sunbuy.storyapi.repository.UsersRepository;
-//import vn.sunbuy.storyapi.security.JwtUtils;
+//import vn.sunbuy.storyapi.service.UserService;
 //
 //@RestController
-//@RequestMapping(URI.V1 + URI.AUTH)
+//@RequestMapping(URI.AUTH)
 //public class AuthController {
 //
-////	@Autowired
-////	private UserService userService;
-////	
+//	@Autowired
+//	private UserService userService;
+//	
 //	@Autowired
 //	AuthenticationManager authenticationManager;
 //
@@ -50,16 +48,16 @@
 //	@Autowired
 //	PasswordEncoder encoder;
 //
-//	@Autowired
-//	JwtUtils jwtUtils;
+////	@Autowired
+////	JwtUtils jwtUtils;
 //	
-//	@RequestMapping(value = URI.SIGNUP, method = RequestMethod.POST)
-//	public Users createUser(@RequestBody Users user) {
+//	@PostMapping(URI.SIGNUP)
+//	public User createUser(@RequestBody User user) {
 //	  return userRepository.save(user);
 //	}
 //
 //	
-//	@RequestMapping(value = URI.LOGIN, method = RequestMethod.POST)
+//	@PostMapping(URI.LOGIN)
 //	public JwtDTO authenticateUser(@Valid @RequestBody LoginRequest user) {
 //		
 //		
@@ -78,13 +76,13 @@
 //		return jwtDto;
 //	}
 //	
-//	@RequestMapping(value = URI.SIGNUP, method = RequestMethod.POST)
+//	@PostMapping(URI.SIGNUP)
 //	public String registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
 //
 //
 //		// Create new user's account
 //		
-//		Users user = new Users(signUpRequest.getUsername(), 
+//		User user = new User(signUpRequest.getUsername(), 
 //							 signUpRequest.getEmail(),
 //							 encoder.encode(signUpRequest.getPassword()));
 //		System.out.print(signUpRequest.getRoles());
@@ -100,13 +98,13 @@
 //			strRoles.forEach(role -> {
 //				switch (role) {
 //				case "admin":
-//					Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN)
+//					Role adminRole = roleRepository.findByName(ERole.ADMIN)
 //							.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
 //					roles.add(adminRole);
 //
 //					break;
 //				default:
-//					Role userRole = roleRepository.findByName(ERole.ROLE_USER)
+//					Role userRole = roleRepository.findByName(ERole.USER)
 //							.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
 //					roles.add(userRole);
 //				}

@@ -7,8 +7,16 @@ spring:
       name: story-services
    data:
       mongodb:
-        uri: mongodb://localhost:27017
-        database: Story_DB
+         uri: mongodb://localhost:27017
+         database: Story_DB
+#      mongodb:
+#        uri: mongodb+srv://Sunbuy:Sunbuy12345@be-spring-story.lhw6dkj.mongodb.net/?retryWrites=true&w=majority
+#        database: Story_DB
+jwt:
+  signInKey: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+  expiration: 86400000 
+  refresh-token:
+    expiration: 604800000
 
 #   http:
 #      multipart:

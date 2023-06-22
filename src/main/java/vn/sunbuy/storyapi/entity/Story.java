@@ -21,15 +21,17 @@ public class Story {
 	private String storyLink;
 	@Indexed(unique = true)
 	private String storyCode;
-	@TextIndexed(weight = 3)
+	@TextIndexed(weight = 4)
 	private String storyName;
 	private String thumbnail;
-	@TextIndexed
+	@TextIndexed(weight = 1)
 	private String author;
+	@TextIndexed(weight = 2)
 	private int totalChapters;
+	@TextIndexed(weight = 3)
 	private List<String> categoryName;
 	private List<String> categoryCode;
-	@TextIndexed(weight = 2)
+	private String categoryDescription;
 	private String info;
 	private String status;
 	private String origin;
@@ -62,6 +64,7 @@ public StoriesDTO transferStories(Story story) {
 		storiesDTO.setId(story.getId());
 		storiesDTO.setStoryCode(story.getStoryCode());
 		storiesDTO.setStoryName(story.getStoryName());
+		storiesDTO.setCategoryDescription(story.getCategoryDescription());
 		storiesDTO.setThumbnail(story.getThumbnail());
 		storiesDTO.setTotalChapters(story.getTotalChapters());
 //		storiesDTO.setCategories(story.getCategories());
@@ -82,7 +85,9 @@ public StoriesDTO transferStories(Story story) {
 		storyDetailDTO.setStoryName(story.getStoryName());
 		storyDetailDTO.setThumbnail(story.getThumbnail());
 		storyDetailDTO.setAuthor(story.getAuthor());
+		storyDetailDTO.setTotalChapters(story.getTotalChapters());
 		storyDetailDTO.setCategoryCode(story.getCategoryCode());
+		storyDetailDTO.setCategoryName(story.getCategoryName());
 		storyDetailDTO.setInfo(story.getInfo());
 		storyDetailDTO.setStatus(story.getStatus());
 //		storyDetailDTO.setOrigin(story.getOrigin());

@@ -1,17 +1,24 @@
-//package vn.sunbuy.storyapi.service;
+package vn.sunbuy.storyapi.service;
+
+import org.springframework.stereotype.Service;
+
+import vn.sunbuy.storyapi.entity.User;
+import vn.sunbuy.storyapi.exception.InvalidPasswordException;
+import vn.sunbuy.storyapi.exception.PasswordMismatchException;
+import vn.sunbuy.storyapi.exception.UserAlreadyExistException;
+import vn.sunbuy.storyapi.exception.UserNotFoundException;
+import vn.sunbuy.storyapi.model.UserDTO;
+
+@Service
+public interface UserService {
+    User registerNewUserAccount(UserDTO userDTO) throws UserAlreadyExistException, PasswordMismatchException;
+    User updateUserInfo(UserDTO userDTO, String username) throws UserNotFoundException, InvalidPasswordException, PasswordMismatchException;
+    User changeUserPassword(String username, String oldPassword, String newPassword) throws UserNotFoundException, InvalidPasswordException, PasswordMismatchException;
+//	User save(User user);
 //
-//import org.springframework.stereotype.Service;
-//
-//import vn.sunbuy.storyapi.entity.Users;
-//
-//@Service
-//public interface UserService {
-//	
-//	Users save(Users user);
-//
-//    Users findByUsername(String username);
+//    User findByUsername(String username);
 //    
-//    Users updateUser(Users user, String id);
-//
-//	
-//}
+//    User updateUser(User user, String id);
+
+	
+}

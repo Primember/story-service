@@ -15,7 +15,9 @@ public class StoryDetailDTO {
 //	private Long totalChapters;
 //	private Long totalViews;
 	private String author;
+	private int totalChapters;
 	private List<String> categoryCode;
+	private List<String> categoryName;
 	private String info;
 	private String status; 
 //	private String origin;

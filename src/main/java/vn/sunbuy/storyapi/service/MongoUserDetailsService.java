@@ -5,13 +5,11 @@
 //
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.security.core.authority.SimpleGrantedAuthority;
-//import org.springframework.security.core.userdetails.User;
 //import org.springframework.security.core.userdetails.UserDetails;
 //import org.springframework.security.core.userdetails.UserDetailsService;
 //import org.springframework.security.core.userdetails.UsernameNotFoundException;
 //import org.springframework.stereotype.Component;
-//
-//import vn.sunbuy.storyapi.entity.Users;
+//import vn.sunbuy.storyapi.entity.User;
 //import vn.sunbuy.storyapi.repository.UsersRepository;
 //
 //@Component
@@ -24,12 +22,12 @@
 //	@Override
 //	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 //		
-//		Users user = usersRepository.findByUsername(username);
+//		User user = usersRepository.findByUsername(username);
 //		if(user == null) {
-//		  throw new UsernameNotFoundException("User not found");
+//		  throw new UsernameNotFoundException("Không tìm thấy");
 //		}
 //		List<SimpleGrantedAuthority> authorities = Arrays.asList(new SimpleGrantedAuthority("user"));
-//		return new User(user.getUsername(), user.getPassword(), authorities);
+//		return new User(user.getUsername(), user.getPassword(), authorities,user.getAvatar());
 //	}
 //
 //}

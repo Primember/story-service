@@ -11,6 +11,8 @@ public class StoriesDTO {
 	private String id;
 	private String storyCode;
 	private String storyName;
+	private String categoryDescription;
+//	private String info;
 	private String thumbnail;
 //    private String author;
 	private int totalChapters;
@@ -24,6 +26,7 @@ public static StoriesDTO transfer(Story story) {
 		storiesDTO.setId(story.getId());
 		storiesDTO.setStoryCode(story.getStoryCode());
 		storiesDTO.setStoryName(story.getStoryName());
+		storiesDTO.setCategoryDescription(story.getCategoryDescription());
 		storiesDTO.setThumbnail(story.getThumbnail());
 		storiesDTO.setTotalChapters(story.getTotalChapters());
 		storiesDTO.setCategoryName(story.getCategoryName());
